@@ -1,0 +1,2 @@
+# yurtify
+solution project
