@@ -1,0 +1,40 @@
+from pathlib import Path
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from app.core.config import settings
+from app.routers import users_router, listings_router, auth_router, categories_router
+import traceback
+
+app = FastAPI(
+    title="Real Estate Marketplace API",
+    description="Backend API for Yurtify built with FastAPI + MySQL",
+    version="1.0.0"
+)
+
+uploads_dir = Path("uploads")
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    traceback.print_exc()
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Real Estate Marketplace API"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+app.include_router(users_router, prefix="/users", tags=["users"])
+app.include_router(listings_router, prefix="/listings", tags=["listings"])
+app.include_router(categories_router, tags=["categories"])
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
