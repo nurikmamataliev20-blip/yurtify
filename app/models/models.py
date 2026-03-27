@@ -35,6 +35,7 @@ class User(Base, TimestampMixin):
     city: Mapped[str] = mapped_column(String(100), index=True)
     preferred_language: Mapped[str] = mapped_column(String(10), default="en")
     account_status: Mapped[str] = mapped_column(String(50), default="active") # active, suspended, deleted
+    role: Mapped[str] = mapped_column(String(50), default="user")
 
     listings: Mapped[List["Listing"]] = relationship(back_populates="owner")
     favorites: Mapped[List["Favorite"]] = relationship(back_populates="user")
@@ -119,6 +120,9 @@ class Favorite(Base):
 
 class Conversation(Base):
     __tablename__ = "conversations"
+    __table_args__ = (
+        UniqueConstraint("listing_id", "participant_a_id", "participant_b_id", name="uix_conversation_listing_participants"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     listing_id: Mapped[int] = mapped_column(ForeignKey("listings.id"))
@@ -138,10 +142,10 @@ class Message(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     conversation_id: Mapped[int] = mapped_column(ForeignKey("conversations.id"))
     sender_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    message_type: Mapped[str] = mapped_column(String(50), default="text") # text, image, system
+    message_type: Mapped[str] = mapped_column(String(50), default="text") # text, image, file
     text_body: Mapped[str] = mapped_column(Text)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
-    sent_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    sent_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     conversation: Mapped["Conversation"] = relationship(back_populates="messages")
@@ -170,12 +174,16 @@ class Notification(Base):
     title: Mapped[str] = mapped_column(String(255))
     body: Mapped[str] = mapped_column(Text)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
 
     user: Mapped["User"] = relationship(back_populates="notifications")
 
 class Report(Base):
     __tablename__ = "reports"
+    __table_args__ = (
+        Index("ix_reports_target_type_target_id", "target_type", "target_id"),
+        Index("ix_reports_status", "status"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     reporter_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -183,7 +191,7 @@ class Report(Base):
     target_id: Mapped[int] = mapped_column(Integer)
     reason_code: Mapped[str] = mapped_column(String(50))
     reason_text: Mapped[Optional[str]] = mapped_column(Text)
-    status: Mapped[str] = mapped_column(String(50), default="open") # open, resolved, dismissed
+    status: Mapped[str] = mapped_column(String(50), default="pending") # pending, reviewed, resolved
     resolution_note: Mapped[Optional[str]] = mapped_column(Text)
     reviewed_by_admin_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

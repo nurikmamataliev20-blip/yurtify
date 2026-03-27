@@ -2,3 +2,8 @@ from .users import router as users_router
 from .listings import router as listings_router
 from .auth import router as auth_router
 from .categories import router as categories_router
+from .favorites import router as favorites_router
+from .messaging import router as messaging_router
+from .attachments import router as attachments_router
+from .notifications import router as notifications_router
+from .reports import router as reports_router

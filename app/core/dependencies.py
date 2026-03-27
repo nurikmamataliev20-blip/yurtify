@@ -30,7 +30,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     
-    if user.account_status != "active":
+    if user.account_status not in ("active", "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Account is {user.account_status}"
@@ -46,7 +46,7 @@ def _get_admin_emails() -> set[str]:
 
 def is_admin_user(user: User) -> bool:
     admin_emails = _get_admin_emails()
-    return user.account_status == "admin" or user.email.lower() in admin_emails
+    return user.role == "admin" or user.email.lower() in admin_emails
 
 
 def get_current_admin(current_user: User = Depends(get_current_user)) -> User:
