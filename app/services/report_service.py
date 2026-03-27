@@ -36,7 +36,7 @@ class ReportService:
             .first()
         )
         if duplicate:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Duplicate report detected")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Duplicate report detected")
 
         report = Report(
             reporter_user_id=current_user.id,
@@ -54,6 +54,28 @@ class ReportService:
     @staticmethod
     def list_reports(db: Session, page: int = 1, page_size: int = 20) -> PaginatedReports:
         query = db.query(Report)
+
+        total_items = query.count()
+        total_pages = ceil(total_items / page_size) if total_items > 0 else 1
+        offset = (page - 1) * page_size
+        items = query.order_by(Report.created_at.desc()).offset(offset).limit(page_size).all()
+
+        return PaginatedReports(
+            page=page,
+            page_size=page_size,
+            total_items=total_items,
+            total_pages=total_pages,
+            items=items,
+        )
+
+    @staticmethod
+    def list_my_reports(
+        db: Session,
+        current_user: User,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> PaginatedReports:
+        query = db.query(Report).filter(Report.reporter_user_id == current_user.id)
 
         total_items = query.count()
         total_pages = ceil(total_items / page_size) if total_items > 0 else 1

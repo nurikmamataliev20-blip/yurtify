@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+{% block title %}Listing {{ item.id }}{% endblock %}
+{% block content %}
+<h2 class="mb-3">Listing #{{ item.id }}</h2>
+<div class="card mb-3"><div class="card-body">
+  <p><strong>Title:</strong> {{ item.title }}</p>
+  <p><strong>Description:</strong> {{ item.description }}</p>
+  <p><strong>Owner:</strong> {{ owner.full_name if owner else item.owner_id }} ({{ item.owner_id }})</p>
+  <p><strong>Category:</strong> {{ category.name if category else item.category_id }}</p>
+  <p><strong>City:</strong> {{ item.city }}</p>
+  <p><strong>Price:</strong> {{ item.price }} {{ item.currency }}</p>
+  <p><strong>Status:</strong> {{ item.status }} | <strong>Moderation:</strong> {{ item.moderation_status }}</p>
+</div></div>
+<div class="d-flex gap-2 align-items-start">
+  <form method="post" action="/admin/listings/{{ item.id }}/approve">
+    <button class="btn btn-success" type="submit">Approve</button>
+  </form>
+  <form class="d-flex gap-2" method="post" action="/admin/listings/{{ item.id }}/reject">
+    <input class="form-control" name="note" placeholder="Reject note (optional)">
+    <button class="btn btn-danger" type="submit">Reject</button>
+  </form>
+</div>
+{% endblock %}

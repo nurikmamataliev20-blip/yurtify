@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.routers import (
+	admin_panel_router,
 	attachments_router,
 	auth_router,
 	categories_router,
@@ -12,6 +13,10 @@ from app.routers import (
 	listings_router,
 	messaging_router,
 	notifications_router,
+	payments_router,
+	promotion_packages_router,
+	promotions_router,
+	public_users_router,
 	reports_router,
 	users_router,
 )
@@ -53,6 +58,11 @@ app.include_router(messaging_router, tags=["messaging"])
 app.include_router(attachments_router, tags=["attachments"])
 app.include_router(notifications_router, tags=["notifications"])
 app.include_router(reports_router, tags=["reports"])
+app.include_router(payments_router, tags=["payments"])
+app.include_router(promotion_packages_router, tags=["promotion-packages"])
+app.include_router(promotions_router, tags=["promotions"])
+app.include_router(public_users_router, prefix="/public/users", tags=["public-users"])
+app.include_router(admin_panel_router, prefix="/admin", tags=["admin"])
 
 
 if __name__ == "__main__":

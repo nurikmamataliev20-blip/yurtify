@@ -46,7 +46,8 @@ class ListingListFilters(BaseModel):
     min_price: Optional[float] = None
     max_price: Optional[float] = None
     condition: Optional[str] = None
-    sort_by: str = Field(default="newest")
+    promoted_only: bool = False
+    sort_by: Optional[str] = Field(default=None)
     page: int = Field(default=1, ge=1)
     page_size: int = Field(default=20, ge=1, le=100)
 
@@ -57,6 +58,8 @@ class ListingRead(ListingBase):
     status: str
     moderation_status: str
     promotion_status: str
+    is_promoted: bool = False
+    promotion_type: Optional[str] = None
     view_count: int
     created_at: datetime
     updated_at: datetime

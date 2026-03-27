@@ -7,3 +7,8 @@ from .messaging import router as messaging_router
 from .attachments import router as attachments_router
 from .notifications import router as notifications_router
 from .reports import router as reports_router
+from .payments import router as payments_router
+from .promotion_packages import router as promotion_packages_router
+from .promotions import router as promotions_router
+from .public_users import router as public_users_router
+from .admin_panel import router as admin_panel_router

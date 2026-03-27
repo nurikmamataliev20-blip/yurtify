@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.models import Conversation, Listing, Message, User
+from app.models.models import Conversation, Listing, Message, MessageAttachment, User
 from app.schemas.messaging_schemas import (
     ConversationStartRequest,
     MessageCreate,
@@ -137,6 +137,29 @@ class MessagingService:
         now = datetime.now(timezone.utc)
         conversation.last_message_at = now
         db.flush()
+
+        attachment_ids = list(dict.fromkeys(payload.attachment_ids + ([payload.attachment_id] if payload.attachment_id else [])))
+        if attachment_ids:
+            attachments = (
+                db.query(MessageAttachment)
+                .join(Message, MessageAttachment.message_id == Message.id)
+                .filter(
+                    MessageAttachment.id.in_(attachment_ids),
+                    Message.conversation_id == conversation.id,
+                    Message.deleted_at.is_(None),
+                )
+                .all()
+            )
+            found_ids = {attachment.id for attachment in attachments}
+            missing_ids = [attachment_id for attachment_id in attachment_ids if attachment_id not in found_ids]
+            if missing_ids:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Attachment(s) not found: {missing_ids}",
+                )
+
+            for attachment in attachments:
+                attachment.message_id = message.id
 
         recipient_id = (
             conversation.participant_b_id

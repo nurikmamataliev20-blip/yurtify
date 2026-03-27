@@ -17,7 +17,7 @@ from app.services.messaging_service import MessagingService
 router = APIRouter()
 
 
-@router.post("/conversations/start", response_model=ConversationRead, status_code=status.HTTP_201_CREATED)
+@router.post("/conversations", response_model=ConversationRead, status_code=status.HTTP_201_CREATED)
 def start_conversation(
     payload: ConversationStartRequest,
     db: Session = Depends(get_db),

@@ -1,12 +1,16 @@
 from datetime import datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import AliasChoices, BaseModel, Field, model_validator
 
 
 class ConversationStartRequest(BaseModel):
     listing_id: int = Field(..., ge=1)
-    recipient_user_id: int = Field(..., ge=1)
+    recipient_user_id: int = Field(
+        ...,
+        ge=1,
+        validation_alias=AliasChoices("recipient_user_id", "recipient_id"),
+    )
 
 
 class ConversationRead(BaseModel):
@@ -46,11 +50,15 @@ class MessageCreate(BaseModel):
     conversation_id: int = Field(..., ge=1)
     message_type: Literal["text", "image", "file"] = "text"
     text_body: Optional[str] = None
+    attachment_id: Optional[int] = Field(default=None, ge=1)
+    attachment_ids: List[int] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_text_payload(self):
         if self.message_type == "text" and not (self.text_body and self.text_body.strip()):
             raise ValueError("text_body is required for text messages")
+        if self.attachment_id is not None and self.attachment_id in self.attachment_ids:
+            raise ValueError("attachment_id must not be duplicated in attachment_ids")
         return self
 
 

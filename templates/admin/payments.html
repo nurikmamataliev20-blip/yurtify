@@ -1,0 +1,36 @@
+{% extends 'admin/base.html' %}
+{% block title %}Payments{% endblock %}
+{% block content %}
+<h2 class="mb-3">Payments</h2>
+<form class="row g-2 mb-3" method="get" action="/admin/payments">
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All statuses</option>
+      {% for s in ['pending','successful','failed','cancelled','refunded'] %}
+      <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+  <thead><tr><th>ID</th><th>User</th><th>Listing</th><th>Amount</th><th>Currency</th><th>Status</th><th>Provider</th><th>Created</th></tr></thead>
+  <tbody>
+    {% for p in items %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.user_id }}</td>
+      <td>{{ p.listing_id }}</td>
+      <td>{{ p.amount }}</td>
+      <td>{{ p.currency }}</td>
+      <td>{{ p.status }}</td>
+      <td>{{ p.payment_provider }}</td>
+      <td>{{ p.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-muted">Page {{ page }} / {{ total_pages }} • Total {{ total_items }}</p>
+{% endblock %}

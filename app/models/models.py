@@ -207,16 +207,19 @@ class Payment(Base, TimestampMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     listing_id: Mapped[Optional[int]] = mapped_column(ForeignKey("listings.id"))
     promotion_id: Mapped[Optional[int]] = mapped_column(ForeignKey("promotions.id"))
+    promotion_package_id: Mapped[Optional[int]] = mapped_column(ForeignKey("promotion_packages.id"))
     amount: Mapped[float] = mapped_column(Float)
     currency: Mapped[str] = mapped_column(String(10), default="USD")
-    status: Mapped[str] = mapped_column(String(50), default="pending", index=True) # pending, completed, failed, refunded
+    status: Mapped[str] = mapped_column(String(50), default="pending", index=True) # pending, successful, failed, cancelled, refunded
     payment_provider: Mapped[str] = mapped_column(String(100))
     provider_reference: Mapped[Optional[str]] = mapped_column(String(255))
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     paid_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     user: Mapped["User"] = relationship(back_populates="payments")
     listing: Mapped[Optional["Listing"]] = relationship(back_populates="payments")
     promotion: Mapped[Optional["Promotion"]] = relationship(back_populates="payments")
+    promotion_package: Mapped[Optional["PromotionPackage"]] = relationship(back_populates="payments")
 
 class Promotion(Base):
     __tablename__ = "promotions"
@@ -224,18 +227,20 @@ class Promotion(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     listing_id: Mapped[int] = mapped_column(ForeignKey("listings.id"))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    promotion_package_id: Mapped[Optional[int]] = mapped_column(ForeignKey("promotion_packages.id"))
     promotion_type: Mapped[str] = mapped_column(String(50)) # top, highlight, vip
     target_city: Mapped[Optional[str]] = mapped_column(String(100))
     target_category_id: Mapped[Optional[int]] = mapped_column(ForeignKey("categories.id"))
     starts_at: Mapped[datetime] = mapped_column(DateTime)
     ends_at: Mapped[datetime] = mapped_column(DateTime)
-    status: Mapped[str] = mapped_column(String(50), default="active", index=True) # active, expired, cancelled
+    status: Mapped[str] = mapped_column(String(50), default="pending", index=True) # pending, active, expired, cancelled
     purchased_price: Mapped[float] = mapped_column(Float)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     user: Mapped["User"] = relationship(back_populates="promotions")
     listing: Mapped["Listing"] = relationship(back_populates="promotions")
     payments: Mapped[List["Payment"]] = relationship(back_populates="promotion")
+    promotion_package: Mapped[Optional["PromotionPackage"]] = relationship(back_populates="promotions")
 
 class PromotionPackage(Base):
     __tablename__ = "promotion_packages"
@@ -243,11 +248,15 @@ class PromotionPackage(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
     price: Mapped[float] = mapped_column(Float)
+    currency: Mapped[str] = mapped_column(String(10), default="KGS")
     duration_days: Mapped[int] = mapped_column(Integer)
     promotion_type: Mapped[str] = mapped_column(String(50))
     description: Mapped[Optional[str]] = mapped_column(Text)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    payments: Mapped[List["Payment"]] = relationship(back_populates="promotion_package")
+    promotions: Mapped[List["Promotion"]] = relationship(back_populates="promotion_package")
 
 class AdminAuditLog(Base):
     __tablename__ = "admin_audit_logs"

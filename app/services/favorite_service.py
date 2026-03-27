@@ -32,7 +32,7 @@ class FavoriteService:
             .first()
         )
         if existing:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Listing already in favorites")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Listing already in favorites")
 
         favorite = Favorite(user_id=current_user.id, listing_id=listing_id)
         db.add(favorite)

@@ -20,10 +20,28 @@ def list_notifications(
     return NotificationService.list_notifications(db, current_user, page=page, page_size=page_size)
 
 
-@router.post("/notifications/{notification_id}/read", response_model=NotificationRead)
+@router.get("/notifications/unread-count")
+def get_unread_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    unread_count = NotificationService.get_unread_count(db, current_user)
+    return {"unread_count": unread_count}
+
+
+@router.patch("/notifications/{notification_id}/read", response_model=NotificationRead)
 def mark_notification_as_read(
     notification_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     return NotificationService.mark_as_read(db, current_user, notification_id)
+
+
+@router.patch("/notifications/read-all")
+def mark_all_notifications_as_read(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    marked_count = NotificationService.mark_all_as_read(db, current_user)
+    return {"marked_count": marked_count}

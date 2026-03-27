@@ -1,0 +1,40 @@
+{% extends 'admin/base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h2 class="mb-3">Reports</h2>
+<form class="row g-2 mb-3" method="get" action="/admin/reports">
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All statuses</option>
+      {% for s in ['pending','reviewed','resolved'] %}
+      <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+  <thead><tr><th>ID</th><th>Reporter</th><th>Target</th><th>Reason</th><th>Status</th><th>Created</th><th>Resolve</th></tr></thead>
+  <tbody>
+    {% for r in items %}
+    <tr>
+      <td>{{ r.id }}</td>
+      <td>{{ r.reporter_user_id }}</td>
+      <td>{{ r.target_type }} #{{ r.target_id }}</td>
+      <td>{{ r.reason_code }}</td>
+      <td>{{ r.status }}</td>
+      <td>{{ r.created_at }}</td>
+      <td>
+        <form class="d-flex gap-2" method="post" action="/admin/reports/{{ r.id }}/resolve">
+          <input class="form-control form-control-sm" name="note" placeholder="note">
+          <button class="btn btn-sm btn-success" type="submit">Resolve</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-muted">Page {{ page }} / {{ total_pages }} • Total {{ total_items }}</p>
+{% endblock %}

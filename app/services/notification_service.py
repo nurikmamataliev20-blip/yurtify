@@ -65,3 +65,28 @@ class NotificationService:
             db.refresh(notification)
 
         return notification
+
+    @staticmethod
+    def get_unread_count(db: Session, current_user: User) -> int:
+        return (
+            db.query(Notification)
+            .filter(Notification.user_id == current_user.id, Notification.is_read.is_(False))
+            .count()
+        )
+
+    @staticmethod
+    def mark_all_as_read(db: Session, current_user: User) -> int:
+        unread_notifications = (
+            db.query(Notification)
+            .filter(Notification.user_id == current_user.id, Notification.is_read.is_(False))
+            .all()
+        )
+
+        if not unread_notifications:
+            return 0
+
+        for notification in unread_notifications:
+            notification.is_read = True
+
+        db.commit()
+        return len(unread_notifications)
