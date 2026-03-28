@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.router import DualSlashAPIRouter
 from app.models.models import User
 from app.schemas.promotion_schemas import PaginatedPromotions, PromotionRead
 from app.services.promotion_service import PromotionService
 
-router = APIRouter()
+router = DualSlashAPIRouter()
 
 
 @router.get("/promotions/my", response_model=PaginatedPromotions)

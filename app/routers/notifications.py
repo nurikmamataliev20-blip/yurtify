@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.router import DualSlashAPIRouter
 from app.models.models import User
 from app.schemas.notification_schemas import NotificationRead, PaginatedNotifications
 from app.services.notification_service import NotificationService
 
-router = APIRouter()
+router = DualSlashAPIRouter()
 
 
 @router.get("/notifications", response_model=PaginatedNotifications)

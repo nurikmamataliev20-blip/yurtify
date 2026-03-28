@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
+from app.core.router import DualSlashAPIRouter
 from app.models.models import User
 from app.schemas.messaging_schemas import (
     ConversationRead,
@@ -14,7 +15,7 @@ from app.schemas.messaging_schemas import (
 )
 from app.services.messaging_service import MessagingService
 
-router = APIRouter()
+router = DualSlashAPIRouter()
 
 
 @router.post("/conversations", response_model=ConversationRead, status_code=status.HTTP_201_CREATED)

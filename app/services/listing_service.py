@@ -26,8 +26,9 @@ class ListingService:
         listing = Listing(
             **listing_in.model_dump(),
             owner_id=current_user.id,
-            status="draft",
-            moderation_status="pending",
+            status="published",
+            moderation_status="approved",
+            published_at=datetime.now(timezone.utc),
         )
         db.add(listing)
         db.commit()

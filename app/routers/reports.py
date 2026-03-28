@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_admin, get_current_user
+from app.core.router import DualSlashAPIRouter
 from app.models.models import User
 from app.schemas.report_schemas import (
     PaginatedReports,
@@ -12,7 +13,7 @@ from app.schemas.report_schemas import (
 )
 from app.services.report_service import ReportService
 
-router = APIRouter()
+router = DualSlashAPIRouter()
 
 
 @router.post("/reports", response_model=ReportRead, status_code=status.HTTP_201_CREATED)
