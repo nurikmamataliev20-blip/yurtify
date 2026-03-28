@@ -2,11 +2,11 @@ from datetime import datetime, timezone
 from math import ceil
 
 from fastapi import HTTPException, status
-from sqlalchemy import case, or_
+from sqlalchemy import case, func, or_
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import is_admin_user
-from app.models.models import Category, Listing, Promotion, User
+from app.models.models import Category, Favorite, Listing, Promotion, User
 from app.schemas.listing_schemas import ListingCreate, ListingListFilters, ListingUpdate, PaginatedListings
 
 
@@ -109,10 +109,26 @@ class ListingService:
             .limit(filters.page_size)
             .all()
         )
+
+        listing_ids = [listing.id for listing, _ in rows]
+        favorite_counts_map = {}
+        if listing_ids:
+            favorite_counts = (
+                db.query(Favorite.listing_id, func.count(Favorite.id).label("favorites_count"))
+                .filter(Favorite.listing_id.in_(listing_ids))
+                .group_by(Favorite.listing_id)
+                .all()
+            )
+            favorite_counts_map = {
+                listing_id: int(favorites_count)
+                for listing_id, favorites_count in favorite_counts
+            }
+
         items = []
         for listing, promotion_type in rows:
             setattr(listing, "is_promoted", promotion_type is not None)
             setattr(listing, "promotion_type", promotion_type)
+            setattr(listing, "favorites_count", favorite_counts_map.get(listing.id, 0))
             items.append(listing)
 
         return PaginatedListings(
@@ -148,8 +164,16 @@ class ListingService:
             .order_by(Promotion.created_at.desc())
             .first()
         )
+
+        favorites_count = (
+            db.query(func.count(Favorite.id))
+            .filter(Favorite.listing_id == listing.id)
+            .scalar()
+        )
+
         setattr(listing, "is_promoted", active_promotion is not None)
         setattr(listing, "promotion_type", active_promotion.promotion_type if active_promotion else None)
+        setattr(listing, "favorites_count", int(favorites_count or 0))
         return listing
 
     @staticmethod
@@ -172,6 +196,7 @@ class ListingService:
         now = datetime.now(timezone.utc)
         listing_ids = [item.id for item in items]
         promotion_map = {}
+        favorite_counts_map = {}
         if listing_ids:
             active_promotions = (
                 db.query(Promotion)
@@ -187,10 +212,22 @@ class ListingService:
                 if promotion.listing_id not in promotion_map:
                     promotion_map[promotion.listing_id] = promotion.promotion_type
 
+            favorite_counts = (
+                db.query(Favorite.listing_id, func.count(Favorite.id).label("favorites_count"))
+                .filter(Favorite.listing_id.in_(listing_ids))
+                .group_by(Favorite.listing_id)
+                .all()
+            )
+            favorite_counts_map = {
+                listing_id: int(favorites_count)
+                for listing_id, favorites_count in favorite_counts
+            }
+
         for item in items:
             promo_type = promotion_map.get(item.id)
             setattr(item, "is_promoted", promo_type is not None)
             setattr(item, "promotion_type", promo_type)
+            setattr(item, "favorites_count", favorite_counts_map.get(item.id, 0))
 
         return PaginatedListings(
             page=page,

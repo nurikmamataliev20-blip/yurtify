@@ -65,7 +65,7 @@ def get_my_listings(
 
 
 @router.get("/{listing_id}", response_model=ListingRead)
-def get_listing_detail(listing_id: int, db: Session = Depends(get_db)):
+def get_listing_detail(listing_id: int, db: Session = Depends(get_db)) -> ListingRead:
     return ListingService.get_listing_detail(db, listing_id)
 
 

@@ -73,6 +73,7 @@ class ListingRead(ListingBase):
     is_promoted: bool = False
     promotion_type: Optional[str] = None
     view_count: int
+    favorites_count: int = 0
     created_at: datetime
     updated_at: datetime
     images: List[ListingImageBase] = []
