@@ -20,6 +20,10 @@ class ConversationRead(BaseModel):
     participant_b_id: int
     last_message_at: Optional[datetime] = None
     created_at: datetime
+    other_participant_id: Optional[int] = None
+    other_participant_name: Optional[str] = None
+    last_message_preview: Optional[str] = None
+    unread_count: int = 0
 
     class Config:
         from_attributes = True

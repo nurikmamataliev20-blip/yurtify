@@ -105,12 +105,60 @@ class MessagingService:
             .all()
         )
 
+        enriched_items = []
+        for conversation in items:
+            other_participant_id = (
+                conversation.participant_b_id
+                if conversation.participant_a_id == current_user.id
+                else conversation.participant_a_id
+            )
+
+            other_user = db.query(User).filter(User.id == other_participant_id).first()
+            other_name = (other_user.full_name.strip() if other_user and other_user.full_name else None)
+
+            last_message = (
+                db.query(Message)
+                .filter(
+                    Message.conversation_id == conversation.id,
+                    Message.deleted_at.is_(None),
+                )
+                .order_by(Message.sent_at.desc())
+                .first()
+            )
+            last_message_preview = (last_message.text_body[:120] if last_message and last_message.text_body else None)
+
+            unread_count = (
+                db.query(Message)
+                .filter(
+                    Message.conversation_id == conversation.id,
+                    Message.sender_id != current_user.id,
+                    Message.is_read.is_(False),
+                    Message.deleted_at.is_(None),
+                )
+                .count()
+            )
+
+            enriched_items.append(
+                {
+                    "id": conversation.id,
+                    "listing_id": conversation.listing_id,
+                    "participant_a_id": conversation.participant_a_id,
+                    "participant_b_id": conversation.participant_b_id,
+                    "last_message_at": conversation.last_message_at,
+                    "created_at": conversation.created_at,
+                    "other_participant_id": other_participant_id,
+                    "other_participant_name": other_name,
+                    "last_message_preview": last_message_preview,
+                    "unread_count": unread_count,
+                }
+            )
+
         return PaginatedConversations(
             page=page,
             page_size=page_size,
             total_items=total_items,
             total_pages=total_pages,
-            items=items,
+            items=enriched_items,
         )
 
     @staticmethod

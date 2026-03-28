@@ -32,9 +32,12 @@ app = FastAPI(
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],
+	allow_origin_regex=".*",
 	allow_credentials=False,
-	allow_methods=["*"],
+	allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
 	allow_headers=["*"],
+	expose_headers=["*"],
+	max_age=86400,
 )
 
 uploads_dir = Path("uploads")

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 PromotionStatus = Literal["pending", "active", "expired", "cancelled"]
@@ -23,6 +23,14 @@ class PromotionRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PromotionCreateRequest(BaseModel):
+    listing_id: int = Field(..., ge=1)
+    package_id: int = Field(..., ge=1)
+    payment_id: int = Field(..., ge=1)
+    target_city: Optional[str] = Field(default=None, max_length=100)
+    target_category_id: Optional[int] = Field(default=None, ge=1)
 
 
 class PaginatedPromotions(BaseModel):
