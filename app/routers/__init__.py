@@ -1,5 +1,6 @@
 from .users import router as users_router
 from .listings import router as listings_router
+from .listing_images import router as listing_images_router
 from .auth import router as auth_router
 from .categories import router as categories_router
 from .favorites import router as favorites_router

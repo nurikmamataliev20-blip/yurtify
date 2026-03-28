@@ -11,6 +11,7 @@ from app.routers import (
 	auth_router,
 	categories_router,
 	favorites_router,
+	listing_images_router,
 	listings_router,
 	messaging_router,
 	notifications_router,
@@ -63,6 +64,7 @@ async def health_check():
 
 app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(listings_router, prefix="/listings", tags=["listings"])
+app.include_router(listing_images_router, tags=["listing-images"])
 app.include_router(categories_router, tags=["categories"])
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(favorites_router, tags=["favorites"])

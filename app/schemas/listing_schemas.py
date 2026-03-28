@@ -1,11 +1,21 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from datetime import datetime
 
 class ListingImageBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     file_url: str
     is_primary: bool = False
     order_index: int = 0
+
+
+class ListingImageRead(ListingImageBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    listing_id: int
+    created_at: datetime
 
 class ListingBase(BaseModel):
     title: str
@@ -52,6 +62,8 @@ class ListingListFilters(BaseModel):
     page_size: int = Field(default=20, ge=1, le=100)
 
 class ListingRead(ListingBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     owner_id: int
     category_id: int
@@ -64,9 +76,6 @@ class ListingRead(ListingBase):
     created_at: datetime
     updated_at: datetime
     images: List[ListingImageBase] = []
-
-    class Config:
-        from_attributes = True
 
 
 class PaginatedListings(BaseModel):
