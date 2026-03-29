@@ -33,3 +33,7 @@ class PaginatedPublicUserListings(BaseModel):
     total_items: int
     total_pages: int
     items: List[PublicUserListingRead]
+
+
+class PublicUserSearchResponse(BaseModel):
+    items: List[PublicUserProfileRead]

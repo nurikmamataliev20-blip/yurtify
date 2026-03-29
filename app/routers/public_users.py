@@ -2,10 +2,23 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.schemas.public_user_schemas import PaginatedPublicUserListings, PublicUserProfileRead
+from app.schemas.public_user_schemas import (
+    PaginatedPublicUserListings,
+    PublicUserProfileRead,
+    PublicUserSearchResponse,
+)
 from app.services.public_user_service import PublicUserService
 
 router = APIRouter()
+
+
+@router.get("/search", response_model=PublicUserSearchResponse)
+def search_public_users(
+    q: str = Query(..., min_length=1),
+    limit: int = Query(default=20, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    return PublicUserService.search_public_users(db, q=q, limit=limit)
 
 
 @router.get("/{user_id}", response_model=PublicUserProfileRead)

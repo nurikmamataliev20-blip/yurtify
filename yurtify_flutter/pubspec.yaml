@@ -21,6 +21,7 @@ dependencies:
   file_picker: ^8.1.2
   intl: ^0.20.2
   timeago: ^3.7.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
