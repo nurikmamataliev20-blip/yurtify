@@ -4,7 +4,15 @@
 Real estate marketplace for Kyrgyzstan built with Flutter + FastAPI.
 
 ## Demo Video
-Watch the full demo: https://youtu.be/IE_w2Im85gg
+Watch the full demo (<= 5 minutes): https://youtu.be/IE_w2Im85gg
+
+## Required Submission Structure
+This repository is organized as required:
+
+- `backend/` - FastAPI backend
+- `mobile/` - contains `yurtify_flutter/`
+- `admin/` - contains `templates/`
+- `README.md`
 
 ## Tech Stack
 - Backend: Python, FastAPI, MySQL, SQLAlchemy, Alembic, JWT
@@ -15,18 +23,18 @@ Watch the full demo: https://youtu.be/IE_w2Im85gg
 
 ### Backend
 ```bash
-cd yurtify
+cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env
+copy .env.example .env
 alembic upgrade head
 uvicorn main:app --reload
 ```
 
-### Flutter
+### Flutter (Mobile)
 ```bash
-cd yurtify_flutter
+cd mobile/yurtify_flutter
 flutter pub get
 flutter run
 ```
@@ -35,7 +43,7 @@ flutter run
 Open: http://localhost:8000/admin/login
 
 ## Demo Credentials
-- Admin: admin@yurtify.com / admin123456
+- Admin: test@test.com / p123
 - User: seller@yurtify.com / seller123456
 
 ## Environment Variables
@@ -57,6 +65,5 @@ Open: http://localhost:8000/admin/login
 - RU/EN localization
 - Admin panel
 
-## Known Limitations
-- Payment gateway is mocked
-- No push notifications
+## Notes
+- Project files were reorganized by moving backend, mobile, and template folders into the required submission layout.

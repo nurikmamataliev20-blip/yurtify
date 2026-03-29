@@ -217,13 +217,17 @@ __marimo__/
 *.iml
 
 # Flutter
-yurtify_flutter/.dart_tool/
-yurtify_flutter/.flutter-plugins
-yurtify_flutter/.flutter-plugins-dependencies
-yurtify_flutter/build/
-yurtify_flutter/.packages
-yurtify_flutter/android/.gradle/
-yurtify_flutter/android/local.properties
+mobile/yurtify_flutter/.dart_tool/
+mobile/yurtify_flutter/.flutter-plugins
+mobile/yurtify_flutter/.flutter-plugins-dependencies
+mobile/yurtify_flutter/build/
+mobile/yurtify_flutter/.packages
+mobile/yurtify_flutter/android/.gradle/
+mobile/yurtify_flutter/android/local.properties
+
+# Uploads (user-generated files)
+uploads/
+backend/uploads/
 
 # OS
 .DS_Store

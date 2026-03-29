@@ -1,0 +1,26 @@
+{% extends 'admin/base.html' %}
+{% block title %}Audit Logs{% endblock %}
+{% block content %}
+<h2 class="mb-3">Audit Logs</h2>
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+  <thead><tr><th>ID</th><th>Admin</th><th>Action</th><th>Target</th><th>Note</th><th>Created</th></tr></thead>
+  <tbody>
+    {% for log in items %}
+    <tr>
+      <td>{{ log.id }}</td>
+      <td>
+        {% set admin = admins.get(log.admin_id) %}
+        {{ admin.email if admin else log.admin_id }}
+      </td>
+      <td>{{ log.action }}</td>
+      <td>{{ log.target_type }} #{{ log.target_id }}</td>
+      <td>{{ log.note }}</td>
+      <td>{{ log.created_at }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-muted">Page {{ page }} / {{ total_pages }} • Total {{ total_items }}</p>
+{% endblock %}

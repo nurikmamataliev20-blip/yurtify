@@ -1,0 +1,51 @@
+{% extends 'admin/base.html' %}
+{% block title %}Listings{% endblock %}
+{% block content %}
+<h2 class="mb-3">Listings</h2>
+<form class="row g-2 mb-3" method="get" action="/admin/listings">
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All moderation statuses</option>
+      {% for s in ['pending','approved','rejected'] %}
+      <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="category_id">
+      <option value="">All categories</option>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {% if category_id and category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select class="form-select" name="city">
+      <option value="">All cities</option>
+      {% for c in cities %}
+      <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-responsive">
+<table class="table table-striped table-bordered">
+  <thead><tr><th>ID</th><th>Title</th><th>Owner</th><th>City</th><th>Status</th><th>Moderation</th><th></th></tr></thead>
+  <tbody>
+    {% for it in items %}
+    <tr>
+      <td>{{ it.id }}</td>
+      <td>{{ it.title }}</td>
+      <td>{{ it.owner_id }}</td>
+      <td>{{ it.city }}</td>
+      <td>{{ it.status }}</td>
+      <td>{{ it.moderation_status }}</td>
+      <td><a class="btn btn-sm btn-outline-primary" href="/admin/listings/{{ it.id }}">View</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-muted">Page {{ page }} / {{ total_pages }} • Total {{ total_items }}</p>
+{% endblock %}

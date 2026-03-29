@@ -1,0 +1,22 @@
+{% extends 'admin/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card"><div class="card-body"><h6>Total Users</h6><h3>{{ stats.total_users }}</h3></div></div></div>
+  <div class="col-md-4"><div class="card"><div class="card-body"><h6>Active Users</h6><h3>{{ stats.active_users }}</h3></div></div></div>
+  <div class="col-md-4"><div class="card"><div class="card-body"><h6>Blocked Users</h6><h3>{{ stats.blocked_users }}</h3></div></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Total Listings</h6><h4>{{ stats.total_listings }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Pending Listings</h6><h4>{{ stats.pending_listings }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Approved Listings</h6><h4>{{ stats.approved_listings }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Rejected Listings</h6><h4>{{ stats.rejected_listings }}</h4></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Total Reports</h6><h4>{{ stats.total_reports }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Total Payments</h6><h4>{{ stats.total_payments }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Total Revenue</h6><h4>{{ '%.2f'|format(stats.total_revenue) }}</h4></div></div></div>
+  <div class="col-md-3"><div class="card"><div class="card-body"><h6>Active Promotions</h6><h4>{{ stats.active_promotions }}</h4></div></div></div>
+</div>
+{% endblock %}

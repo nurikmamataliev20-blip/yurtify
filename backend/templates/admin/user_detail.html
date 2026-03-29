@@ -1,0 +1,21 @@
+{% extends 'admin/base.html' %}
+{% block title %}User {{ item.id }}{% endblock %}
+{% block content %}
+<h2 class="mb-3">User #{{ item.id }}</h2>
+<div class="card mb-3"><div class="card-body">
+  <p><strong>Name:</strong> {{ item.full_name }}</p>
+  <p><strong>Email:</strong> {{ item.email }}</p>
+  <p><strong>Phone:</strong> {{ item.phone }}</p>
+  <p><strong>Status:</strong> {{ item.account_status }}</p>
+  <p><strong>City:</strong> {{ item.city }}</p>
+  <p><strong>Listings:</strong> {{ listings_count }} | <strong>Payments:</strong> {{ payments_count }} | <strong>Reports:</strong> {{ reports_count }}</p>
+</div></div>
+<div class="d-flex gap-2">
+  <form method="post" action="/admin/users/{{ item.id }}/suspend">
+    <button class="btn btn-warning" type="submit">Suspend</button>
+  </form>
+  <form method="post" action="/admin/users/{{ item.id }}/unsuspend">
+    <button class="btn btn-success" type="submit">Unsuspend</button>
+  </form>
+</div>
+{% endblock %}
