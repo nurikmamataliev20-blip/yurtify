@@ -3,6 +3,9 @@
 ## Overview
 Real estate marketplace for Kyrgyzstan built with Flutter + FastAPI.
 
+## Demo Video
+Watch the full demo: https://youtu.be/IE_w2Im85gg
+
 ## Tech Stack
 - Backend: Python, FastAPI, MySQL, SQLAlchemy, Alembic, JWT
 - Mobile: Flutter, Dart, Riverpod, Go Router, Dio
